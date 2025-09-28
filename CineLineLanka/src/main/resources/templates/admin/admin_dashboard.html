@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome, Admin!</h1>
+        <p class="lead">Manage the cinema operations for CineLine Lanka.</p>
+        <hr class="my-4">
+        <p>Use the navigation below to access management sections.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Movie Management</h5>
+                    <p class="card-text">Add, edit, and delete movie entries.</p>
+                    <a th:href="@{/admin/movies/list}" class="btn btn-primary">Go to Movies</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Theater Management</h5>
+                    <p class="card-text">Define theaters, capacity, and seating layouts.</p>
+                    <a href="#" class="btn btn-outline-secondary disabled">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Showtime Management</h5>
+                    <p class="card-text">Schedule movies for specific theaters and times.</p>
+                    <a href="#" class="btn btn-outline-secondary disabled">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Movies</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body { padding: 20px; }
+    .table th, .table td { vertical-align: middle; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 class="mb-4">Movie Management (Admin)</h2>
+
+  <div th:if="${param.success}" class="alert alert-success">Movie added successfully!</div>
+  <div th:if="${param.updateSuccess}" class="alert alert-info">Movie updated successfully!</div>
+  <div th:if="${param.deleteSuccess}" class="alert alert-warning">Movie deleted successfully!</div>
+  <div th:if="${param.deleteError}" class="alert alert-danger" th:text="'Error: Movie ' + ${param.deleteError} + ' not found or cannot be deleted.'"></div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <a th:href="@{/admin/movies/new}" class="btn btn-primary">Add New Movie</a>
+      <a href="/admin/dashboard" class="btn btn-secondary ml-2">Back to Dashboard</a>
+    </div>
+  </div>
+
+  <div th:if="${movies.isEmpty()}" class="alert alert-light">
+    No movies found in the database. Click 'Add New Movie' to get started.
+  </div>
+
+  <table th:unless="${movies.isEmpty()}" class="table table-striped table-hover">
+    <thead class="thead-dark">
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Genre</th>
+      <th>Duration (Min)</th>
+      <th>Release Date</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="movie : ${movies}">
+      <td th:text="${movie.movieId}">1</td>
+      <td th:text="${movie.title}">The Dark Knight</td>
+      <td th:text="${movie.genre}">Action</td>
+      <td th:text="${movie.duration}">152</td>
+      <td th:text="${#temporals.format(movie.releaseDate, 'dd-MMM-yyyy')}">2008-07-18</td>
+      <td>
+        <a th:href="@{/admin/movies/edit/{id}(id=${movie.movieId})}" class="btn btn-sm btn-info">Edit</a>
+        <a th:href="@{/admin/movies/delete/{id}(id=${movie.movieId})}"
+           onclick="return confirm('Are you sure you want to delete this movie?')"
+           class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${movieDto.movieId} ? 'Edit Movie' : 'Add New Movie'">Movie Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-group label { font-weight: bold; }
+        .error-message { color: red; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 th:text="${movieDto.movieId} ? 'Edit Movie: ' + ${movieDto.title} : 'Add New Movie'" class="mb-4">Movie Form</h2>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="${movieDto.movieId} ? @{/admin/movies/edit/{id}(id=${movieDto.movieId})} : @{/admin/movies/new}"
+          th:object="${movieDto}" method="post">
+
+        <input type="hidden" th:field="*{movieId}" />
+
+        <div class="form-group">
+            <label for="title">Title <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="title" th:field="*{title}" placeholder="Enter movie title">
+            <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error-message">Title Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="genre">Genre (e.g., Action, Romance, etc.)</label>
+            <input type="text" class="form-control" id="genre" th:field="*{genre}" placeholder="Enter genre">
+            <p th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}" class="error-message">Genre Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="duration">Duration (in minutes) <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="duration" th:field="*{duration}" min="1" placeholder="e.g., 120">
+            <p th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}" class="error-message">Duration Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="releaseDate">Release Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="releaseDate" th:field="*{releaseDate}">
+            <p th:if="${#fields.hasErrors('releaseDate')}" th:errors="*{releaseDate}" class="error-message">Release Date Error</p>
+        </div>
+
+        <button type="submit" class="btn btn-success" th:text="${movieDto.movieId} ? 'Save Changes' : 'Add Movie'">Save</button>
+        <a th:href="@{/admin/movies/list}" class="btn btn-secondary ml-2">Cancel</a>
+    </form>
+</div>
+
+</body>
+</html>
