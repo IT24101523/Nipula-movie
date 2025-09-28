@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${theaterDto.theaterId} ? 'Edit Theater' : 'Add New Theater'">Theater Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-group label { font-weight: bold; }
+        .error-message { color: red; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 th:text="${theaterDto.theaterId} ? 'Edit Theater: ' + ${theaterDto.name} : 'Add New Theater'" class="mb-4">Theater Form</h2>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="${theaterDto.theaterId} ? @{/admin/theaters/edit/{id}(id=${theaterDto.theaterId})} : @{/admin/theaters/new}"
+          th:object="${theaterDto}" method="post">
+
+        <input type="hidden" th:field="*{theaterId}" />
+
+        <div class="form-group">
+            <label for="name">Theater Name (e.g., Screen 1, VIP Hall) <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Enter theater name">
+            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message">Name Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="locationCity">Location City <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="locationCity" th:field="*{locationCity}" placeholder="e.g., Colombo, Kandy">
+            <p th:if="${#fields.hasErrors('locationCity')}" th:errors="*{locationCity}" class="error-message">City Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="capacity">Seating Capacity <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="capacity" th:field="*{capacity}" min="1" placeholder="e.g., 150">
+            <p th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}" class="error-message">Capacity Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="screenType">Screen Type (Optional)</label>
+            <input type="text" class="form-control" id="screenType" th:field="*{screenType}" placeholder="e.g., Standard, IMAX, Gold Class">
+            <p th:if="${#fields.hasErrors('screenType')}" th:errors="*{screenType}" class="error-message">Screen Type Error</p>
+        </div>
+
+        <button type="submit" class="btn btn-success" th:text="${theaterDto.theaterId} ? 'Save Changes' : 'Add Theater'">Save</button>
+        <a th:href="@{/admin/theaters/list}" class="btn btn-secondary ml-2">Cancel</a>
+    </form>
+</div>
+
+</body>
+</html>

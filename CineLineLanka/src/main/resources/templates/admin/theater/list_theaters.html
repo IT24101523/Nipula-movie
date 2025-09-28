@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Theaters</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body { padding: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 class="mb-4">Theater Management (Admin)</h2>
+
+  <div th:if="${param.success}" class="alert alert-success">Theater added successfully!</div>
+  <div th:if="${param.updateSuccess}" class="alert alert-info">Theater updated successfully!</div>
+  <div th:if="${param.deleteSuccess}" class="alert alert-warning">Theater deleted successfully!</div>
+  <div th:if="${param.deleteError}" class="alert alert-danger" th:text="'Error: Theater ' + ${param.deleteError} + ' not found or cannot be deleted.'"></div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <a th:href="@{/admin/theaters/new}" class="btn btn-primary">Add New Theater</a>
+      <a th:href="@{/admin/dashboard}" class="btn btn-secondary ml-2">Back to Dashboard</a>
+    </div>
+  </div>
+
+  <div th:if="${theaters.isEmpty()}" class="alert alert-light">
+    No theaters found. Click 'Add New Theater' to get started.
+  </div>
+
+  <table th:unless="${theaters.isEmpty()}" class="table table-striped table-hover">
+    <thead class="thead-dark">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>City/Location</th>
+      <th>Capacity</th>
+      <th>Screen Type</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="theater : ${theaters}">
+      <td th:text="${theater.theaterId}">1</td>
+      <td th:text="${theater.name}">Screen 1</td>
+      <td th:text="${theater.locationCity}">Colombo</td>
+      <td th:text="${theater.capacity}">150</td>
+      <td th:text="${theater.screenType ?: 'N/A'}">Standard</td>
+      <td>
+        <a th:href="@{/admin/theaters/edit/{id}(id=${theater.theaterId})}" class="btn btn-sm btn-info">Edit</a>
+        <a th:href="@{/admin/theaters/delete/{id}(id=${theater.theaterId})}"
+           onclick="return confirm('WARNING: Deleting a theater might affect existing showtimes. Are you sure?')"
+           class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
