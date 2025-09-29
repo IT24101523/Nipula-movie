@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Showtimes</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body { padding: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 class="mb-4">Showtime Management (Admin)</h2>
+
+  <div th:if="${param.success}" class="alert alert-success">Showtime scheduled successfully!</div>
+  <div th:if="${param.updateSuccess}" class="alert alert-info">Showtime updated successfully!</div>
+  <div th:if="${param.deleteSuccess}" class="alert alert-warning">Showtime deleted successfully!</div>
+  <div th:if="${param.deleteError}" class="alert alert-danger" th:text="'Error: Showtime ' + ${param.deleteError} + ' not found.'"></div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <a th:href="@{/admin/showtimes/new}" class="btn btn-primary">Schedule New Showtime</a>
+      <a th:href="@{/admin/dashboard}" class="btn btn-secondary ml-2">Back to Dashboard</a>
+    </div>
+  </div>
+
+  <div th:if="${showtimes.isEmpty()}" class="alert alert-light">
+    No showtimes are currently scheduled.
+  </div>
+
+  <table th:unless="${showtimes.isEmpty()}" class="table table-striped table-hover">
+    <thead class="thead-dark">
+    <tr>
+      <th>ID</th>
+      <th>Movie</th>
+      <th>Theater</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Price (LKR)</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="showtime : ${showtimes}">
+      <td th:text="${showtime.showtimeId}">1</td>
+      <td th:text="${showtime.movie.title}">Movie Title</td>
+      <td th:text="${showtime.theater.name} + ' (' + ${showtime.theater.locationCity} + ')'">Screen 1 (Colombo)</td>
+      <td th:text="${#temporals.format(showtime.startTime, 'dd-MMM-yyyy HH:mm')}">11-Sep-2025 10:00</td>
+      <td th:text="${#temporals.format(showtime.endTime, 'HH:mm')}">12:30</td>
+      <td th:text="${#numbers.formatDecimal(showtime.ticketPrice, 0, 'COMMA', 2, 'POINT')}">1500.00</td>
+      <td>
+        <a th:href="@{/admin/showtimes/edit/{id}(id=${showtime.showtimeId})}" class="btn btn-sm btn-info">Edit</a>
+        <a th:href="@{/admin/showtimes/delete/{id}(id=${showtime.showtimeId})}"
+           onclick="return confirm('WARNING: Deleting a showtime will affect ticket sales. Are you sure?')"
+           class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

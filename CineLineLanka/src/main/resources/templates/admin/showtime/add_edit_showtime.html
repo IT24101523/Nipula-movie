@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${showtimeDto.showtimeId} ? 'Edit Showtime' : 'Schedule New Showtime'">Showtime Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-group label { font-weight: bold; }
+        .error-message { color: red; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 th:text="${showtimeDto.showtimeId} ? 'Edit Showtime' : 'Schedule New Showtime'" class="mb-4">Showtime Form</h2>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="${showtimeDto.showtimeId} ? @{/admin/showtimes/edit/{id}(id=${showtimeDto.showtimeId})} : @{/admin/showtimes/new}"
+          th:object="${showtimeDto}" method="post">
+
+        <input type="hidden" th:field="*{showtimeId}" />
+
+        <div class="form-group">
+            <label for="movieId">Movie <span class="text-danger">*</span></label>
+            <select class="form-control" id="movieId" th:field="*{movieId}">
+                <option value="">-- Select Movie --</option>
+                <option th:each="movie : ${movies}"
+                        th:value="${movie.movieId}"
+                        th:text="${movie.title} + ' (' + ${movie.duration} + ' min)'">Movie Title (120 min)</option>
+            </select>
+            <p th:if="${#fields.hasErrors('movieId')}" th:errors="*{movieId}" class="error-message">Movie Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="theaterId">Theater / Screen <span class="text-danger">*</span></label>
+            <select class="form-control" id="theaterId" th:field="*{theaterId}">
+                <option value="">-- Select Theater --</option>
+                <option th:each="theater : ${theaters}"
+                        th:value="${theater.theaterId}"
+                        th:text="${theater.name} + ' in ' + ${theater.locationCity} + ' (' + ${theater.capacity} + ' seats)'">Screen 1 (150 seats)</option>
+            </select>
+            <p th:if="${#fields.hasErrors('theaterId')}" th:errors="*{theaterId}" class="error-message">Theater Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="startTime">Show Start Time <span class="text-danger">*</span></label>
+            <input type="datetime-local" class="form-control" id="startTime" th:field="*{startTime}">
+            <p th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" class="error-message">Start Time Error</p>
+        </div>
+
+        <div class="form-group">
+            <label for="ticketPrice">Ticket Price (LKR) <span class="text-danger">*</span></label>
+            <input type="number" step="0.01" class="form-control" id="ticketPrice" th:field="*{ticketPrice}" min="1" placeholder="e.g., 1500.00">
+            <p th:if="${#fields.hasErrors('ticketPrice')}" th:errors="*{ticketPrice}" class="error-message">Price Error</p>
+        </div>
+
+        <button type="submit" class="btn btn-success" th:text="${showtimeDto.showtimeId} ? 'Save Changes' : 'Schedule Showtime'">Schedule</button>
+        <a th:href="@{/admin/showtimes/list}" class="btn btn-secondary ml-2">Cancel</a>
+    </form>
+</div>
+
+</body>
+</html>
