@@ -1,110 +1,157 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        /* --- Base Layout --- */
+        body {
+            margin: 0;
+            font-family: 'Verdana', sans-serif;
+            background-color: #f4f7f6; /* Light gray background */
+            display: flex; /* Use flexbox for side-by-side layout */
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Navigation --- */
         .sidebar {
-            height: 100vh;
-            background-color: #343a40; /* Dark background */
+            width: 240px;
+            background-color: #2c3e50; /* Dark sidebar */
+            color: white;
             padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0; /* Prevents sidebar from shrinking */
         }
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 16px;
-            color: #f8f9fa; /* Light text */
+        .sidebar-header {
+            text-align: center;
+            padding: 10px 0 20px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3498db; /* Primary color accent */
+        }
+        .sidebar-nav a {
             display: block;
+            color: #ecf0f1;
+            padding: 15px 25px;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+            transition: background-color 0.2s, border-left-color 0.2s;
         }
-        .sidebar a:hover {
-            background-color: #495057;
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background-color: #34495e;
+            border-left-color: #3498db;
         }
-        .content {
-            padding: 20px;
+
+        /* --- Main Content Area --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
         }
-        .header {
-            background-color: #e9ecef;
-            padding: 10px 20px;
-            border-bottom: 1px solid #dee2e6;
+        .header-section {
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-section h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        /* --- Simple Cards (The main feature area) --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .info-card {
+            background: white;
+            padding: 25px;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-top: 5px solid #3498db; /* Blue accent line (Default) */
+        }
+        .info-card h4 {
+            font-size: 1.2rem;
+            color: #34495e;
+            margin-top: 0;
+        }
+        .info-card p {
+            color: #7f8c8d;
+        }
+        .info-card a {
+            display: inline-block;
+            margin-top: 15px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-<div class="d-flex">
-    <div class="sidebar text-white">
-        <h4 class="text-center mb-4 text-warning">CineLine Admin</h4>
-        <hr class="bg-light"/>
+<div class="sidebar">
+    <div class="sidebar-header">CineLine Admin</div>
 
-        <a th:href="@{/admin/dashboard}">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-        </a>
+    <div class="sidebar-nav">
+        <a th:href="@{/admin/dashboard}" class="active">Dashboard</a>
+        <a th:href="@{/admin/movies/list}">Movie Management</a>
+        <a th:href="@{/admin/theaters/list}">Theater Setup</a>
+        <a th:href="@{/admin/showtimes/list}">Showtime Scheduler</a>
 
-        <a th:href="@{/admin/movies/list}"
-           sec:authorize="hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_MANAGER')">
-            <i class="fas fa-film"></i> Movie Management
-        </a>
+        <a th:href="@{/admin/management/dashboard}" style="color: #e74c3c;">Staff & Roles</a>
 
-        <a th:href="@{/admin/theaters/list}"
-           sec:authorize="hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_MANAGER')">
-            <i class="fas fa-building"></i> Theater Management
-        </a>
-
-        <a th:href="@{/admin/showtimes/list}"
-           sec:authorize="hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_MANAGER', 'ROLE_FRONTDESK_EXECUTIVE')">
-            <i class="fas fa-clock"></i> Showtime Management
-        </a>
-
-        <hr class="bg-light"/>
-
-        <h6 class="text-muted px-3 mt-3">User & Staff Control</h6>
-
-        <a th:href="@{/admin/users/list}"
-           sec:authorize="hasRole('ROLE_SUPER_ADMIN')">
-            <i class="fas fa-user-friends"></i> Customer/User Management
-        </a>
-
-        <a th:href="@{/admin/admins/list}"
-           sec:authorize="hasRole('ROLE_SUPER_ADMIN')">
-            <i class="fas fa-user-shield"></i> Admin/Staff Management
-        </a>
-
-        <hr class="bg-light"/>
-
-        <a th:href="@{/logout}" class="mt-auto">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-    </div>
-
-    <div class="flex-grow-1">
-        <div class="header d-flex justify-content-between align-items-center">
-            <h3>Welcome, <span sec:authentication="name" class="text-primary">User</span>!</h3>
-            <span class="badge badge-secondary"
-                  sec:authentication="authorities">ROLE_MANAGER</span>
-        </div>
-
-        <div class="content">
-            <h2>System Overview</h2>
-            <p>This is your main administrative control panel. Use the navigation bar on the left to manage the cinema system components.</p>
-
-            <div class="row mt-4">
-                <div class="col-md-3">
-                    <div class="card text-white bg-info mb-3">
-                        <div class="card-header">Total Customers</div>
-                        <div class="card-body">
-                            <h4 class="card-title" th:text="${totalCustomers}">1500</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <div style="padding: 20px 25px;">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" style="width: 100%; padding: 10px; background-color: #e74c3c; border: none; color: white; border-radius: 4px; cursor: pointer;">
+                    Logout
+                </button>
+            </form>
         </div>
     </div>
 </div>
 
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<div class="main-content">
+
+    <div class="header-section">
+        <h1>Hello, <span sec:authentication="name">Admin</span>!</h1>
+        <div style="color: #7f8c8d;">Today: <span th:text="${#dates.format(#dates.createNow(), 'MMM d, yyyy')}"></span></div>
+    </div>
+
+    <div class="card-grid">
+
+        <div class="info-card">
+            <h4>Movie Management</h4>
+            <p>Add, edit, and update details for all films in the system.</p>
+            <a th:href="@{/admin/movies/list}">View Movies →</a>
+        </div>
+
+        <div class="info-card" style="border-top-color: #2ecc71;">
+            <h4>Theater Management</h4>
+            <p>Configure theaters, capacity, and check seat layouts.</p>
+            <a th:href="@{/admin/theaters/list}">Configure Theaters →</a>
+        </div>
+
+        <div class="info-card" style="border-top-color: #f1c40f;">
+            <h4>Showtime Scheduling</h4>
+            <p>Create and manage the screening schedule for all venues.</p>
+            <a th:href="@{/admin/showtimes/list}">Schedule Showtimes →</a>
+        </div>
+
+        <div class="info-card" style="border-top-color: #e74c3c;">
+            <h4>Staff & Role Management</h4>
+            <p>Manage admin users, roles, and access permissions across the system.</p>
+            <a th:href="@{/admin/management/dashboard}" style="color: #e74c3c;">Manage Users →</a>
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>

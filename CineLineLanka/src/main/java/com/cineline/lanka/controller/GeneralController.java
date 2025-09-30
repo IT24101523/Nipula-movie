@@ -7,34 +7,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class GeneralController {
 
     /**
-     * Handles the public home page of the cinema site.
-     * Mapped to: GET /
+     * Handles the root path ("/") and redirects to the login page.
      */
     @GetMapping("/")
     public String home() {
-        // Assume you have an index.html or public/home.html template
-        return "index";
+        return "redirect:/login";
     }
+
+    // NOTE: The conflicting /login mapping MUST be in LoginController.java
 
     /**
-     * Handles the custom login page.
-     * Mapped to: GET /login
+     * Maps the /403 URL to the custom 403.html template
+     * when Spring Security throws an AccessDeniedException.
+     * Looks for: src/main/resources/templates/403.html
      */
-    @GetMapping("/login")
-    public String login() {
-        return "login"; // Renders src/main/resources/templates/login.html
+    @GetMapping("/403")
+    public String accessDenied() {
+        return "403";
     }
-
-    /**
-     * Handles the customer registration page.
-     * Mapped to: GET /register
-     */
-    @GetMapping("/register")
-    public String register() {
-        // You'll likely need a form DTO and registration logic later
-        return "register"; // Renders src/main/resources/templates/register.html
-    }
-
-    // NOTE: The old @GetMapping("/admin/dashboard") method has been removed
-    // to resolve the Ambiguous Mapping error.
 }

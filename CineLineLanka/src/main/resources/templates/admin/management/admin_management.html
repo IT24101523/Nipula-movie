@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff & Role Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="jumbotron bg-danger text-white">
+        <h1 class="display-4">Staff Management Dashboard</h1>
+        <p class="lead">Welcome, SUPER_ADMIN. Use this page to view, add, and manage staff roles.</p>
+    </div>
+
+    <p class="mb-4">
+        <a th:href="@{/admin/dashboard}" class="btn btn-secondary">← Back to Main Dashboard</a>
+    </p>
+
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <strong>Error:</strong> <span th:text="${error}"></span>
+    </div>
+
+    <div th:if="${param.success}" class="alert alert-success" role="alert">
+        <span th:if="${param.success[0] == 'staffAdded'}">Staff member registered successfully!</span>
+        <span th:if="${param.success[0] == 'roleUpdated'}">Staff role updated successfully!</span>
+    </div>
+
+    <hr/>
+
+    <div class="card shadow mb-5">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 card-title mb-0">Add New Staff Member</h2>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/admin/management/register-new-staff}" method="post">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" class="form-control" id="username" name="username" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select class="form-control" id="role" name="role" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="MANAGER">MANAGER</option>
+                        <option value="FRONTDESK_EXECUTIVE">FRONT DESK EXECUTIVE</option>
+                        <option value="MARKETING_COORDINATOR">MARKETING COORDINATOR</option> <option value="IT_SUPPORT_OFFICER">IT SUPPORT OFFICER</option> </select>
+                </div>
+
+                <button type="submit" class="btn btn-success">Register Staff</button>
+            </form>
+        </div>
+    </div>
+
+    <hr/>
+
+    <h2 class="mb-3">Current Staff List</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped shadow-sm">
+            <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Current Role</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="admin : ${admins}">
+                <td th:text="${admin.id}">1</td>
+                <td th:text="${admin.username}">username</td>
+                <td th:text="${admin.email}">email@example.com</td>
+                <td th:text="${admin.role}">ROLE</td>
+                <td>
+                    <form th:action="@{/admin/management/update-role}" method="post" class="form-inline">
+                        <input type="hidden" name="adminId" th:value="${admin.id}" />
+
+                        <select name="newRole" class="form-control form-control-sm mr-2">
+                            <option value="SUPER_ADMIN" th:selected="${admin.role == 'SUPER_ADMIN'}">SUPER ADMIN</option>
+                            <option value="MANAGER" th:selected="${admin.role == 'MANAGER'}">MANAGER</option>
+                            <option value="FRONTDESK_EXECUTIVE" th:selected="${admin.role == 'FRONTDESK_EXECUTIVE'}">FRONT DESK EXECUTIVE</option>
+                            <option value="MARKETING_COORDINATOR" th:selected="${admin.role == 'MARKETING_COORDINATOR'}">MARKETING COORDINATOR</option> <option value="IT_SUPPORT_OFFICER" th:selected="${admin.role == 'IT_SUPPORT_OFFICER'}">IT SUPPORT OFFICER</option> </select>
+                        <button type="submit" class="btn btn-warning btn-sm">Update Role</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div> <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

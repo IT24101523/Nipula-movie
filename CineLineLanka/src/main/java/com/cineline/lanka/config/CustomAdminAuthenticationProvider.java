@@ -1,11 +1,8 @@
 package com.cineline.lanka.config;
+// Note: Package path might be different based on your exact file location
 
-// FIX: Use the path we confirmed from the image: com.cineline.lanka.model.security.Admin
-import com.cineline.lanka.model.security.Admin;
-// ASSUMED FIX: Use the new repository interface name: AdminRepository
+import com.cineline.lanka.model.admin.Admin;
 import com.cineline.lanka.repository.AdminRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,17 +14,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Component
 public class CustomAdminAuthenticationProvider implements AuthenticationProvider {
 
-    // NOTE: Changed from AdminUserRepository to AdminRepository
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
+    // CONSTRUCTOR INJECTION: Correctly wires dependencies
     public CustomAdminAuthenticationProvider(AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
@@ -38,32 +33,34 @@ public class CustomAdminAuthenticationProvider implements AuthenticationProvider
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        // 1. Look up the Admin in the database
-        Optional<Admin> userOptional = adminRepository.findByUsername(username);
+        Optional<Admin> adminOptional = adminRepository.findByUsername(username);
 
-        if (userOptional.isEmpty()) {
-            throw new UsernameNotFoundException("Invalid username or password.");
+        if (adminOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Admin user not found: " + username);
         }
 
-        Admin adminUser = userOptional.get();
+        Admin admin = adminOptional.get();
 
-        // 2. Verify the password hash
-        if (!passwordEncoder.matches(password, adminUser.getPassword())) {
+        if (!admin.isEnabled()) {
+            throw new BadCredentialsException("User account is disabled.");
+        }
+
+        // Verify the provided password
+        if (!passwordEncoder.matches(password, admin.getPassword())) {
             throw new BadCredentialsException("Invalid username or password.");
         }
 
-        // 3. Authentication successful. Prepare the authorities (roles).
-        // Assuming your Admin entity has a getRole() method
-        String role = adminUser.getRole();
+        // *** CRITICAL FIX FOR 403 ERROR ***
+        // Ensure the role is prefixed with "ROLE_" to satisfy Spring Security's hasRole() check
+        String roleWithPrefix = admin.getRole().startsWith("ROLE_") ? admin.getRole() : "ROLE_" + admin.getRole();
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleWithPrefix);
 
-        String authorityRole = role.startsWith("ROLE_") ? role : "ROLE_" + role;
-        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(authorityRole));
 
-        // 4. Return a fully authenticated token
+        // Authentication successful
         return new UsernamePasswordAuthenticationToken(
-                adminUser.getUsername(), // Principal
-                null, // Credentials
-                authorities
+                admin.getUsername(),
+                admin.getPassword(),
+                Collections.singletonList(authority)
         );
     }
 
