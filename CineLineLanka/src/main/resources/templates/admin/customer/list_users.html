@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Management</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Customer Management</h1>
+    <a th:href="@{/admin/users/new}" class="btn btn-primary">
+      Add New Customer
+    </a>
+  </div>
+  <hr/>
+
+  <div th:if="${param.success}" class="alert alert-success" role="alert">
+    Customer saved successfully!
+  </div>
+  <div th:if="${param.deleteSuccess}" class="alert alert-warning" role="alert">
+    Customer deleted successfully!
+  </div>
+
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Registration Date</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+      <td th:text="${user.customerId}">1</td>
+      <td th:text="${user.name}">John Doe</td>
+      <td th:text="${user.email}">john.doe@email.com</td>
+      <td th:text="${user.phone}">071-1234567</td>
+      <td th:text="${#temporals.format(user.registrationDate, 'yyyy-MM-dd HH:mm')}">2024-01-01</td>
+      <td>
+        <a th:href="@{/admin/users/edit/{id}(id=${user.customerId})}"
+           class="btn btn-sm btn-info">Edit</a>
+
+        <a th:href="@{/admin/users/delete/{id}(id=${user.customerId})}"
+           class="btn btn-sm btn-danger"
+           onclick="return confirm('Are you sure you want to delete this customer?');">
+          Delete
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div th:if="${users.empty}" class="alert alert-info">
+    No customers found in the system.
+  </div>
+
+</div>
+</body>
+</html>

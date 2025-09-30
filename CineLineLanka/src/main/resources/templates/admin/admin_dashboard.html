@@ -1,56 +1,110 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40; /* Dark background */
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #f8f9fa; /* Light text */
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+        .content {
+            padding: 20px;
+        }
+        .header {
+            background-color: #e9ecef;
+            padding: 10px 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container mt-5">
-    <div class="jumbotron">
-        <h1 class="display-4">Welcome, Admin!</h1>
-        <p class="lead">Manage the cinema operations for CineLine Lanka.</p>
-        <hr class="my-4">
-        <p>Use the navigation below to access management sections.</p>
+<div class="d-flex">
+    <div class="sidebar text-white">
+        <h4 class="text-center mb-4 text-warning">CineLine Admin</h4>
+        <hr class="bg-light"/>
+
+        <a th:href="@{/admin/dashboard}">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+
+        <a th:href="@{/admin/movies/list}"
+           sec:authorize="hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_MANAGER')">
+            <i class="fas fa-film"></i> Movie Management
+        </a>
+
+        <a th:href="@{/admin/theaters/list}"
+           sec:authorize="hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_MANAGER')">
+            <i class="fas fa-building"></i> Theater Management
+        </a>
+
+        <a th:href="@{/admin/showtimes/list}"
+           sec:authorize="hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_MANAGER', 'ROLE_FRONTDESK_EXECUTIVE')">
+            <i class="fas fa-clock"></i> Showtime Management
+        </a>
+
+        <hr class="bg-light"/>
+
+        <h6 class="text-muted px-3 mt-3">User & Staff Control</h6>
+
+        <a th:href="@{/admin/users/list}"
+           sec:authorize="hasRole('ROLE_SUPER_ADMIN')">
+            <i class="fas fa-user-friends"></i> Customer/User Management
+        </a>
+
+        <a th:href="@{/admin/admins/list}"
+           sec:authorize="hasRole('ROLE_SUPER_ADMIN')">
+            <i class="fas fa-user-shield"></i> Admin/Staff Management
+        </a>
+
+        <hr class="bg-light"/>
+
+        <a th:href="@{/logout}" class="mt-auto">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
     </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Movie Management</h5>
-                    <p class="card-text">Add, edit, and delete movie entries.</p>
-                    <a th:href="@{/admin/movies/list}" class="btn btn-primary">Go to Movies</a>
-                </div>
-            </div>
+    <div class="flex-grow-1">
+        <div class="header d-flex justify-content-between align-items-center">
+            <h3>Welcome, <span sec:authentication="name" class="text-primary">User</span>!</h3>
+            <span class="badge badge-secondary"
+                  sec:authentication="authorities">ROLE_MANAGER</span>
         </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Theater Management</h5>
-                    <p class="card-text">Define theaters, capacity, and seating layouts.</p>
-                    <a th:href="@{/admin/theaters/list}" class="btn btn-primary">Go to Theaters</a>
+        <div class="content">
+            <h2>System Overview</h2>
+            <p>This is your main administrative control panel. Use the navigation bar on the left to manage the cinema system components.</p>
+
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-header">Total Customers</div>
+                        <div class="card-body">
+                            <h4 class="card-title" th:text="${totalCustomers}">1500</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4 mb-4">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h5 class="card-title">Showtime Management</h5>
-                    <p class="card-text">Schedule movies for specific theaters and times.</p>
-                    <a th:href="@{/admin/showtimes/list}" class="btn btn-primary">Go to Showtimes</a>
-                </div>
-            </div>
         </div>
-    </div>
-
-    <div class="mt-4">
-        <a th:href="@{/logout}" class="btn btn-danger">Logout</a>
     </div>
 </div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 </body>
 </html>
